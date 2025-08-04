@@ -7,12 +7,11 @@ It includes features like hospital locator, AI chatbot for medicine suggestions,
 
 ## 👥 Team & Roles
 
-| Name             | Role                   |
-|------------------|------------------------|
-| Rishubh       | Frontend Developer     |
-| Kshitij Patil    | Backend Developer      |
-| Bhavesh       | AI Integration |
-
+| Name           | Role                   |
+|----------------|------------------------|
+| Rishubh        | Frontend Developer     |
+| Kshitij Patil  | Backend Developer      |
+| Bhavesh        | AI Integration         |
 
 ---
 
@@ -30,27 +29,33 @@ It includes features like hospital locator, AI chatbot for medicine suggestions,
 - RESTful APIs
 
 ### AI / Chatbot
-- Dialogflow / Rasa (planned)
+- Dialogflow / Rasa (Planned)
 - Custom Medicine Recommendation Logic
 
 ---
 
-## 📦 Features (Planned/Partial)
-
-- [x] Home Page UI
-- [x] Hospital Locator via Maps API
-- [ ] AI Chatbot (MEDA) for Medicine Suggestions
-- [ ] Doctor Search and Filters
-- [ ] Online Appointment Booking
-- [ ] Admin & Doctor Login Portal
-- [ ] Prescription Upload & Pharmacy Order
-
----
-
-## 🚀 How to Run Locally
+## 🚀 How to Run Locally (and Use GitHub)
 
 ```bash
+# STEP 1: Clone this repository
 git clone https://github.com/Hotizen/Home_MED.git
+
+# STEP 2: Go inside the project folder
 cd Home_MED
-# Start frontend (if using live server)
-# Start backend (once server code is ready)
+
+# STEP 3: Open frontend (index.html) with Live Server or your browser
+
+# STEP 4 (optional): If backend is added, start server
+# cd backend
+# npm install
+# node server.js
+
+# --- GitHub Commands (for everyone) ---
+
+# To pull latest code from GitHub
+git pull origin main
+
+# To push your updated code
+git add .
+git commit -m "Your message here"
+git push origin main
