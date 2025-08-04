@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <base target="_self">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home-MED - Complete Medical Solution</title>
+    <meta name="description" content="Find nearby hospitals, consult doctors online, get medicine suggestions from AI, and order medicines with multiple payment options">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#2563eb",
+                        secondary: "#1e40af",
+                        accent: "#3b82f6",
+                        dark: "#1e293b",
+                        light: "#f8fafc"
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .chat-container {
+            height: 500px;
+        }
+        #map {
+            height: 400px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i class="fas fa-heartbeat text-3xl text-primary"></i>
+                <span class="text-xl font-bold text-dark">Home-MED</span>
+            </div>
+            <div class="hidden md:flex space-x-6">
+                <a href="#home" class="text-dark hover:text-primary font-medium">Home</a>
+                <a href="#map" class="text-dark hover:text-primary font-medium">Find Hospitals</a>
+                <a href="#meda" class="text-dark hover:text-primary font-medium">MEDA AI</a>
+                <a href="#doctors" class="text-dark hover:text-primary font-medium">Doctors</a>
+                <a href="#pharmacy" class="text-dark hover:text-primary font-medium">Pharmacy</a>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-secondary transition">Login</button>
+                <button class="md:hidden text-dark">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section id="home" class="py-12 bg-gradient-to-r from-primary to-accent text-white">
+            <div class="container mx-auto px-4 flex flex-col md:flex-row items-center">
+                <div class="md:w-1/2 mb-8 md:mb-0">
+                    <h1 class="text-4xl md:text-5xl font-bold mb-4">Your Complete Healthcare Solution</h1>
+                    <p class="text-xl mb-6">Find hospitals, consult doctors, get medicine suggestions, and order medicines - all in one place.</p>
+                    <div class="flex flex-wrap gap-4">
+                        <button class="bg-white text-primary px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition">Book Appointment</button>
+                        <button class="border-2 border-white text-white px-6 py-3 rounded-lg font-medium hover:bg-white hover:text-primary transition">Chat with MEDA</button>
+                    </div>
+                </div>
+                <div class="md:w-1/2">
+                    <img src="https://picsum.photos/600/400?random=101" alt="Healthcare professionals" class="rounded-lg shadow-xl" loading="lazy">
+                </div>
+            </div>
+        </section>
+
+        <!-- Hospital Map Section -->
+        <section id="map-section" class="py-12 bg-white">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-dark mb-8 text-center">Find Nearby Medical Facilities</h2>
+                <div class="bg-gray-100 p-4 rounded-lg">
+                    <div class="flex flex-col md:flex-row gap-4 mb-4">
+                        <input type="text" id="location-input" placeholder="Enter your location" class="flex-grow p-3 border rounded-lg">
+                        <select id="facility-type" class="p-3 border rounded-lg">
+                            <option value="hospital">Hospitals</option>
+                            <option value="pharmacy">Pharmacies</option>
+                            <option value="clinic">Clinics</option>
+                            <option value="emergency">Emergency</option>
+                        </select>
+                        <button id="search-btn" class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-secondary transition">Search</button>
+                    </div>
+                    <div id="map" class="w-full rounded-lg"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- MEDA AI Chatbot Section -->
+        <section id="meda" class="py-12 bg-gray-50">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-dark mb-8 text-center">MEDA AI Assistant</h2>
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                    <div class="bg-primary text-white p-4 flex items-center">
+                        <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center mr-3">
+                            <i class="fas fa-robot text-primary text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold">MEDA AI</h3>
+                            <p class="text-sm">Your personal healthcare assistant</p>
+                        </div>
+                    </div>
+                    <div class="chat-container p-4 overflow-y-auto" id="chat-messages">
+                        <div class="flex mb-4">
+                            <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center mr-3">
+                                <i class="fas fa-robot text-primary"></i>
+                            </div>
+                            <div class="bg-gray-100 p-3 rounded-lg max-w-xs md:max-w-md">
+                                <p>Hello! I'm MEDA, your AI healthcare assistant. How can I help you today? You can ask me about symptoms, medicines, or general health advice.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-4 border-t">
+                        <div class="flex">
+                            <input type="text" id="user-input" placeholder="Describe your symptoms or ask about medicines..." class="flex-grow p-3 border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                            <button id="send-btn" class="bg-primary text-white px-4 rounded-r-lg hover:bg-secondary transition">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                        <div class="mt-2 text-sm text-gray-500">
+                            <p>MEDA can suggest medicines based on symptoms but always consult a doctor for serious conditions.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Doctors Section -->
+        <section id="doctors" class="py-12 bg-white">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-dark mb-8 text-center">Consult with Doctors</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Doctor Card 1 -->
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden border border-gray-100 hover:shadow-lg transition">
+                        <img src="https://picsum.photos/400/300?random=201" alt="Dr. Sarah Johnson" class="w-full h-48 object-cover" loading="lazy">
+                        <div class="p-4">
+                            <h3 class="text-xl font-bold text-dark">Dr. Sarah Johnson</h3>
+                            <p class="text-gray-600 mb-2">Cardiologist</p>
+                            <div class="flex items-center mb-2">
+                                <i class="fas fa-star text-yellow-400 mr-1"></i>
+                                <span class="font-medium">4.8</span>
+                                <span class="text-gray-500 ml-2">(124 reviews)</span>
+                            </div>
+                            <p class="text-gray-700 mb-4">Available for video and voice consultations. Specializes in heart diseases and hypertension.</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-primary font-bold">$50/session</span>
+                                <button class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-secondary transition">Book Now</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Doctor Card 2 -->
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden border border-gray-100 hover:shadow-lg transition">
+                        <img src="https://picsum.photos/400/300?random=202" alt="Dr. Michael Chen" class="w-full h-48 object-cover" loading="lazy">
+                        <div class="p-4">
+                            <h3 class="text-xl font-bold text-dark">Dr. Michael Chen</h3>
+                            <p class="text-gray-600 mb-2">Pediatrician</p>
+                            <div class="flex items-center mb-2">
+                                <i class="fas fa-star text-yellow-400 mr-1"></i>
+                                <span class="font-medium">4.9</span>
+                                <span class="text-gray-500 ml-2">(89 reviews)</span>
+                            </div>
+                            <p class="text-gray-700 mb-4">Specializes in child healthcare and development. Available for video consultations.</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-primary font-bold">$40/session</span>
+                                <button class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-secondary transition">Book Now</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Doctor Card 3 -->
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden border border-gray-100 hover:shadow-lg transition">
+                        <img src="https://picsum.photos/400/300?random=203" alt="Dr. Priya Sharma" class="w-full h-48 object-cover" loading="lazy">
+                        <div class="p-4">
+                            <h3 class="text-xl font-bold text-dark">Dr. Priya Sharma</h3>
+                            <p class="text-gray-600 mb-2">General Physician</p>
+                            <div class="flex items-center mb-2">
+                                <i class="fas fa-star text-yellow-400 mr-1"></i>
+                                <span class="font-medium">4.7</span>
+                                <span class="text-gray-500 ml-2">(156 reviews)</span>
+                            </div>
+                            <p class="text-gray-700 mb-4">Available for both video and voice consultations. Specializes in general medicine and diagnostics.</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-primary font-bold">$30/session</span>
+                                <button class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-secondary transition">Book Now</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center mt-8">
+                    <button class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-secondary transition">View All Doctors</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pharmacy Section -->
+        <section id="pharmacy" class="py-12 bg-gray-50">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-dark mb-8 text-center">Online Pharmacy</h2>
+                <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+                    <div class="flex flex-col md:flex-row gap-4 mb-6">
+                        <input type="text" placeholder="Search medicines..." class="flex-grow p-3 border rounded-lg">
+                        <button class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-secondary transition">Search</button>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                        <!-- Medicine Card 1 -->
+                        <div class="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition">
+                            <img src="https://picsum.photos/200/200?random=301" alt="Paracetamol" class="w-full h-32 object-contain mb-4" loading="lazy">
+                            <h3 class="font-bold text-dark mb-1">Paracetamol 500mg</h3>
+                            <p class="text-gray-600 text-sm mb-2">10 tablets</p>
+                            <div class="flex justify-between items-center mb-3">
+                                <span class="font-bold text-primary">$2.50</span>
+                                <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">In Stock</span>
+                            </div>
+                            <button class="w-full bg-primary text-white py-2 rounded-lg hover:bg-secondary transition">Add to Cart</button>
+                        </div>
+                        
+                        <!-- Medicine Card 2 -->
+                        <div class="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition">
+                            <img src="https://picsum.photos/200/200?random=302" alt="Ibuprofen" class="w-full h-32 object-contain mb-4" loading="lazy">
+                            <h3 class="font-bold text-dark mb-1">Ibuprofen 200mg</h3>
+                            <p class="text-gray-600 text-sm mb-2">20 tablets</p>
+                            <div class="flex justify-between items-center mb-3">
+                                <span class="font-bold text-primary">$4.20</span>
+                                <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">In Stock</span>
+                            </div>
+                            <button class="w-full bg-primary text-white py-2 rounded-lg hover:bg-secondary transition">Add to Cart</button>
+                        </div>
+                        
+                        <!-- Medicine Card 3 -->
+                        <div class="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition">
+                            <img src="https://picsum.photos/200/200?random=303" alt="Cetirizine" class="w-full h-32 object-contain mb-4" loading="lazy">
+                            <h3 class="font-bold text-dark mb-1">Cetirizine 10mg</h3>
+                            <p class="text-gray-600 text-sm mb-2">10 tablets</p>
+                            <div class="flex justify-between items-center mb-3">
+                                <span class="font-bold text-primary">$3.00</span>
+                                <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">In Stock</span>
+                            </div>
+                            <button class="w-full bg-primary text-white py-2 rounded-lg hover:bg-secondary transition">Add to Cart</button>
+                        </div>
+                        
+                        <!-- Medicine Card 4 -->
+                        <div class="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition">
+                            <img src="https://picsum.photos/200/200?random=304" alt="Omeprazole" class="w-full h-32 object-contain mb-4" loading="lazy">
+                            <h3 class="font-bold text-dark mb-1">Omeprazole 20mg</h3>
+                            <p class="text-gray-600 text-sm mb-2">14 capsules</p>
+                            <div class="flex justify-between items-center mb-3">
+                                <span class="font-bold text-primary">$5.50</span>
+                                <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">In Stock</span>
+                            </div>
+                            <button class="w-full bg-primary text-white py-2 rounded-lg hover:bg-secondary transition">Add to Cart</button>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-primary-50 border border-primary-100 rounded-lg p-4">
+                        <h3 class="font-bold text-dark mb-2">Checkout Options</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="bg-white p-4 rounded-lg border border-gray-200">
+                                <h4 class="font-medium mb-2">Payment Methods</h4>
+                                <div class="space-y-2">
+                                    <label class="flex items-center">
+                                        <input type="radio" name="payment" checked class="mr-2">
+                                        <span>UPI Payment</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="radio" name="payment" class="mr-2">
+                                        <span>Credit/Debit Card</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="radio" name="payment" class="mr-2">
+                                        <span>Digital Wallets</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="radio" name="payment" class="mr-2">
+                                        <span>Cash on Delivery</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="bg-white p-4 rounded-lg border border-gray-200">
+                                <h4 class="font-medium mb-2">Delivery Options</h4>
+                                <div class="space-y-2">
+                                    <label class="flex items-center">
+                                        <input type="radio" name="delivery" checked class="mr-2">
+                                        <span>Standard Delivery (2-3 days)</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="radio" name="delivery" class="mr-2">
+                                        <span>Express Delivery (1 day)</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="radio" name="delivery" class="mr-2">
+                                        <span>Pickup from Nearest Pharmacy</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="bg-white p-4 rounded-lg border border-gray-200">
+                                <h4 class="font-medium mb-2">Order Summary</h4>
+                                <div class="space-y-2">
+                                    <div class="flex justify-between">
+                                        <span>Subtotal:</span>
+                                        <span>$15.20</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>Delivery:</span>
+                                        <span>$2.00</span>
+                                    </div>
+                                    <div class="flex justify-between font-bold">
+                                        <span>Total:</span>
+                                        <span>$17.20</span>
+                                    </div>
+                                    <button class="w-full bg-primary text-white py-2 rounded-lg hover:bg-secondary transition mt-2">Place Order</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Telemedicine Section -->
+        <section class="py-12 bg-white">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-dark mb-8 text-center">Telemedicine Services</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div>
+                        <h3 class="text-2xl font-bold text-dark mb-4">Consult Doctors from Home</h3>
+                        <p class="text-gray-700 mb-6">Our telemedicine platform allows you to consult with qualified doctors through secure video calls or voice calls. Get prescriptions, medical advice, and follow-up consultations without leaving your home.</p>
+                        <div class="space-y-4">
+                            <div class="flex items-start">
+                                <i class="fas fa-video text-primary text-xl mr-3 mt-1"></i>
+                                <div>
+                                    <h4 class="font-bold text-dark">Video Consultation</h4>
+                                    <p class="text-gray-600">Face-to-face consultation with high quality video and audio.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <i class="fas fa-phone-alt text-primary text-xl mr-3 mt-1"></i>
+                                <div>
+                                    <h4 class="font-bold text-dark">Voice Consultation</h4>
+                                    <p class="text-gray-600">Consult with doctors through a simple phone call.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <i class="fas fa-prescription text-primary text-xl mr-3 mt-1"></i>
+                                <div>
+                                    <h4 class="font-bold text-dark">E-Prescriptions</h4>
+                                    <p class="text-gray-600">Get digital prescriptions that can be used at any pharmacy.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-secondary transition mt-6">Book Teleconsultation</button>
+                    </div>
+                    <div class="bg-gray-100 rounded-lg overflow-hidden">
+                        <img src="https://picsum.photos/600/400?random=401" alt="Telemedicine consultation" class="w-full h-auto" loading="lazy">
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-dark text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">HealthCare Pro</h3>
+                    <p class="text-gray-300">Your complete healthcare solution with AI assistance, telemedicine, and online pharmacy services.</p>
+                    <div class="flex space-x-4 mt-4">
+                        <a href="#" class="text-gray-300 hover:text-white"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-white"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-white"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-white"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Quick Links</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-300 hover:text-white">Home</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white">Find Hospitals</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white">MEDA AI</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white">Doctors</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white">Pharmacy</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Services</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-300 hover:text-white">Telemedicine</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white">Medicine Delivery</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white">AI Symptom Checker</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white">Health Records</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white">Lab Tests</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Contact Us</h4>
+                    <ul class="space-y-2">
+                        <li class="flex items-start">
+                            <i class="fas fa-map-marker-alt text-primary mr-2 mt-1"></i>
+                            <span class="text-gray-300">123 Health Street, Medical City, 100001</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-phone-alt text-primary mr-2 mt-1"></i>
+                            <span class="text-gray-300">+1 (555) 123-4567</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-envelope text-primary mr-2 mt-1"></i>
+                            <span class="text-gray-300">info@healthcarepro.com</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2023 HealthCare Pro. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Google Maps
+        function initMap() {
+            const map = new google.maps.Map(document.getElementById("map"), {
+                center: { lat: -34.397, lng: 150.644 },
+                zoom: 8,
+            });
+            
+            // Add search functionality
+            const input = document.getElementById("location-input");
+            const searchBox = new google.maps.places.SearchBox(input);
+            
+            map.addListener("bounds_changed", () => {
+                searchBox.setBounds(map.getBounds());
+            });
+            
+            document.getElementById("search-btn").addEventListener("click", () => {
+                const places = searchBox.getPlaces();
+                if (places.length === 0) return;
+                
+                const bounds = new google.maps.LatLngBounds();
+                places.forEach(place => {
+                    if (!place.geometry) return;
+                    
+                    new google.maps.Marker({
+                        map,
+                        title: place.name,
+                        position: place.geometry.location,
+                    });
+                    
+                    if (place.geometry.viewport) {
+                        bounds.union(place.geometry.viewport);
+                    } else {
+                        bounds.extend(place.geometry.location);
+                    }
+                });
+                map.fitBounds(bounds);
+            });
+        }
+        
+        // Initialize MEDA AI Chatbot
+        document.addEventListener("DOMContentLoaded", function() {
+            const chatMessages = document.getElementById("chat-messages");
+            const userInput = document.getElementById("user-input");
+            const sendBtn = document.getElementById("send-btn");
+            
+            // Sample medicine database
+            const medicineDatabase = {
+                "fever": {
+                    "suggestion": "For fever, you can take Paracetamol (500mg every 6 hours) or Ibuprofen (200-400mg every 6-8 hours). Drink plenty of fluids and rest.",
+                    "medicines": [
+                        { "name": "Paracetamol", "dosage": "500mg", "frequency": "Every 6 hours", "max": "4 times daily" },
+                        { "name": "Ibuprofen", "dosage": "200-400mg", "frequency": "Every 6-8 hours", "max": "1200mg daily" }
+                    ]
+                },
+                "headache": {
+                    "suggestion": "For headache, you can take Paracetamol (500mg) or Ibuprofen (200-400mg). Avoid triggers like stress, dehydration, or eye strain.",
+                    "medicines": [
+                        { "name": "Paracetamol", "dosage": "500mg", "frequency": "Every 6 hours", "max": "4 times daily" },
+                        { "name": "Ibuprofen", "dosage": "200-400mg", "frequency": "Every 6-8 hours", "max": "1200mg daily" },
+                        { "name": "Aspirin", "dosage": "300-600mg", "frequency": "Every 4-6 hours", "max": "4000mg daily" }
+                    ]
+                },
+                "cough": {
+                    "suggestion": "For cough, you can take Dextromethorphan (cough suppressant) or Guaifenesin (expectorant). Stay hydrated and consider honey for soothing.",
+                    "medicines": [
+                        { "name": "Dextromethorphan", "dosage": "10-20mg", "frequency": "Every 4-6 hours", "max": "120mg daily" },
+                        { "name": "Guaifenesin", "dosage": "200-400mg", "frequency": "Every 4 hours", "max": "2400mg daily" }
+                    ]
+                }
+            };
+            
+            // Chatbot function
+            function sendMessage() {
+                const message = userInput.value.trim();
+                if (message === "") return;
+                
+                // Add user message to chat
+                addMessage(message, "user");
+                userInput.value = "";
+                
+                // Process message and generate response
+                setTimeout(() => {
+                    let response = "";
+                    let foundMatch = false;
+                    
+                    // Check for keywords in medicine database
+                    for (const keyword in medicineDatabase) {
+                        if (message.toLowerCase().includes(keyword)) {
+                            const data = medicineDatabase[keyword];
+                            response = data.suggestion + "\n\nSuggested medicines:\n";
+                            data.medicines.forEach(med => {
+                                response += `- ${med.name}: ${med.dosage}, ${med.frequency} (max ${med.max})\n`;
+                            });
+                            response += "\nNote: Always consult a doctor for proper diagnosis and prescription.";
+                            foundMatch = true;
+                            break;
+                        }
+                    }
+                    
+                    if (!foundMatch) {
+                        response = "I can help with information about medicines and symptoms. Could you please describe your symptoms in more detail? For serious conditions, please consult a doctor immediately.";
+                    }
+                    
+                    addMessage(response, "bot");
+                }, 1000);
+            }
+            
+            // Add message to chat
+            function addMessage(text, sender) {
+                const messageDiv = document.createElement("div");
+                messageDiv.className = `flex mb-4 ${sender === "user" ? "justify-end" : ""}`;
+                
+                if (sender === "user") {
+                    messageDiv.innerHTML = `
+                        <div class="bg-primary text-white p-3 rounded-lg max-w-xs md:max-w-md">
+                            <p>${text}</p>
+                        </div>
+                        <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center ml-3">
+                            <i class="fas fa-user text-white"></i>
+                        </div>
+                    `;
+                } else {
+                    messageDiv.innerHTML = `
+                        <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center mr-3">
+                            <i class="fas fa-robot text-primary"></i>
+                        </div>
+                        <div class="bg-gray-100 p-3 rounded-lg max-w-xs md:max-w-md">
+                            <p>${text}</p>
+                        </div>
+                    `;
+                }
+                
+                chatMessages.appendChild(messageDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+            
+            // Event listeners
+            sendBtn.addEventListener("click", sendMessage);
+            userInput.addEventListener("keypress", function(e) {
+                if (e.key === "Enter") {
+                    sendMessage();
+                }
+            });
+            
+            // Initialize map when Google Maps API is loaded
+            if (typeof google !== "undefined") {
+                initMap();
+            } else {
+                window.initMap = initMap;
+            }
+        });
+        
+        // Doctor appointment booking functionality
+        document.querySelectorAll(".book-appointment-btn").forEach(button => {
+            button.addEventListener("click", function() {
+                // In a real implementation, this would open a booking modal
+                alert("Appointment booking functionality would be implemented here with calendar integration and payment processing.");
+            });
+        });
+        
+        // Pharmacy cart functionality
+        document.querySelectorAll(".add-to-cart-btn").forEach(button => {
+            button.addEventListener("click", function() {
+                // In a real implementation, this would add items to cart
+                alert("Medicine added to cart. Cart functionality would be implemented with quantity selection and checkout process.");
+            });
+        });
+    </script>
+</body>
+</html>
