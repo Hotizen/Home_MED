@@ -1,0 +1,12 @@
+# React
+frontend/node_modules
+frontend/build
+
+# Node
+backend/node_modules
+
+# AI
+ai/node_modules
+
+# OS/System
+.env
