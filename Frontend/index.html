@@ -1,13 +1,105 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Home-MED | Healthcare at Your Fingertips</title>
+
+  <!-- Bootstrap 5 CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet"/>
+
+  <!-- Custom CSS -->
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f8f9fa;
+    }
+
+    .hero {
+      background-color: #e9f7ef;
+      padding: 80px 0;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      font-weight: bold;
+    }
+
+    .section-title {
+      margin-top: 60px;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .feature-card {
+      background: white;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <h1>Welcome to Home-MED</h1>
+      <p class="lead">Your one-stop platform for accessible and connected healthcare</p>
+      <a href="#features" class="btn btn-success mt-3">Explore Features</a>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section id="features" class="container py-5">
+    <div class="section-title">
+      <h2>Core Features</h2>
+    </div>
+    <div class="row">
+      <div class="col-md-4">
+        <div class="feature-card">
+          <h5>🗺 Hospital Locator</h5>
+          <p>Find nearby hospitals using Google Maps API integration.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-card">
+          <h5>🤖 AI Chatbot (MEDA)</h5>
+          <p>Get smart medicine suggestions via our custom AI chatbot.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-card">
+          <h5>👨‍⚕️ Doctor Listings</h5>
+          <p>Search for doctors by specialization and location.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-card">
+          <h5>💬 Telemedicine</h5>
+          <p>Book video consultations with verified doctors from your home.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-card">
+          <h5>💊 Online Pharmacy</h5>
+          <p>Upload prescriptions and order medicines directly through the platform.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="text-center py-4">
+    <p>© 2025 Home-MED. Built with ❤️ by Rishubh, Kshitij, and Bhavesh</p>
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
 </html>
