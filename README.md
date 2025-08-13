@@ -9,7 +9,7 @@ It includes features like hospital locator, AI chatbot for medicine suggestions,
 
 | Name           | Role                   |
 |----------------|------------------------|
-| Rishubh        | Frontend Developer     |
+| Ruushubh        | Frontend Developer     |
 | Kshitij Patil  | Backend Developer      |
 | Bhavesh        | AI Integration         |
 
